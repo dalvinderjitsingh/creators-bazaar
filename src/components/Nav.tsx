@@ -9,34 +9,50 @@ import { Button } from "@/components/ui/button";
 // import { useAccount, useDisconnect } from "wagmi";
 // import { isWalletAddressAvailable } from "@/lib/db/utils";
 
-import { useWallets, usePrivy } from "@privy-io/react-auth";
+import { useWallets, usePrivy, useLogin } from "@privy-io/react-auth";
 
 export default function Nav() {
   const router = useRouter();
 
-  const { ready, authenticated, login } = usePrivy();
+  const { ready, authenticated } = usePrivy();
   // Disable login when Privy is not ready or the user is already authenticated
   const disableLogin = !ready || (ready && authenticated);
 
   let registered = false;
 
-  useEffect(() => {
-    console.log("hi 1");
-    if (ready && authenticated) {
-      console.log("hi 2");
+  // useEffect(() => {
+  //   console.log("hi 1");
+  //   if (ready && authenticated) {
+  //     console.log("hi 2");
 
-      // Replace this code with however you'd like to handle an authenticated yet not fully registered user
-      if (!registered) {
-        console.log("hi 3");
+  //     // Replace this code with however you'd like to handle an authenticated yet not fully registered user
+  //     if (!registered) {
+  //       console.log("hi 3");
 
-        router.push("/settings");
-      } else {
-        console.log("hi 4");
-        // Redirect to home or dashboard if registration is complete
-        router.push("/home");
-      }
-    }
-  }, [ready, authenticated, registered, router]);
+  //       router.push("/settings");
+  //     } else {
+  //       console.log("hi 4");
+  //       // Redirect to home or dashboard if registration is complete
+  //       router.push("/home");
+  //     }
+  //   }
+  // }, [ready, authenticated, registered, router]);
+
+  // privy callback code
+  const {login} = useLogin({
+    onComplete: (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
+      console.log("Callback logs dude: " + user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount);
+      // Any logic you'd like to execute if the user is/becomes authenticated while this
+      // component is mounted
+    },
+    onError: (error) => {
+      console.log(error);
+      // Any logic you'd like to execute after a user exits the login flow or there is an error
+    },
+  });
+  
+  // Then call `login` in your code, which will invoke these callbacks on completion
+
 
   // oldie codeie belowie
   //   const { isConnected, address } = useAccount();
