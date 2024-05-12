@@ -1,18 +1,35 @@
 "use client";
-import React from "react";
+import React, { use, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePrivy } from "@privy-io/react-auth";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function SideBar() {
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, logout } = usePrivy();
+  const router = useRouter();
   const pathname = usePathname();
+
+  function handleLogout() {
+    // not working, have to put the routing logic within page as the sidebar doesnt work if user is inauthenticated
+    logout();
+    router.push("/");
+  }
 
   // If privy is not ready or user is not authenticated, don't render anything
   if (!ready || !authenticated || pathname === "/") {
     return null;
   }
+
+  
+
+  // useeffect if a visitor is not signed in then route them to the login page
+  // if (!authenticated) {
+    // router.push("/login");
+  // }
+
+  
+
 
   return (
     <aside className="flex  h-screen flex-col justify-between bg-red-300 px-5">
@@ -50,6 +67,7 @@ export default function SideBar() {
           isMember={isMember}
           handleLogout={handleLogout}
         /> */}
+        <Button onClick={handleLogout}>Log out</Button>
       </div>
     </aside>
   );
