@@ -1,8 +1,12 @@
+// what data to check or validate
+// name has to be zoded* = min/max/string/no-special chars or num; only letters/
+// -make sure sql injection is improbable by using variables and binding those to queries
+
+
 import { sql } from "@vercel/postgres";
 import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
-// import { userSchema } from "@/lib/validators/userSchema";
-// import { checkUsernameExists } from "@/lib/db/utils";
+import { userSchema } from "@/lib/validators/userSchema";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,20 +15,7 @@ export async function POST(request: NextRequest) {
     const validatedData = userSchema.parse(body);
 
     // Extract the validated data
-    const { name, username } = validatedData;
-
-    // Extract the wallet address from the request body
-    const { wallet_address } = body;
-
-    // Check if the username already exists in the database
-    const usernameExists = await checkUsernameExists(username);
-    if (usernameExists) {
-      // Username already exists, return an error response
-      return NextResponse.json(
-        { error: "Username already exists" },
-        { status: 409 },
-      );
-    }
+    const { name } = validatedData;
 
     // Execute the SQL query with the validated data
     try {
